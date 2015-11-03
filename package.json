@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/collabra/react-modal.git"
+    "url": "git+ssh://git@bitbucket.org/collabra/react-pitch-tool.git"
   },
   "license": "ISC",
-  "homepage": "https://bitbucket.org/collabra/react-modal#readme",
-  "dependencies": {
-  },
+  "homepage": "https://bitbucket.org/collabra/react-pitch-tool#readme",
+  "dependencies": {},
   "devDependencies": {
     "babel": "^5.8.23",
     "react": "^0.14.0",
-    "react-dom": "^0.14.0"
+    "react-dom": "^0.14.0",
+    "soundfont-player": "^0.4.0"
   }
 }
