@@ -7,38 +7,67 @@ export default class PitchTool extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      instrument: 'sine',
-      source: null
+      instrument: 'piano',
+      lastNote: null,
+      sources: {},
+      stopNoteTimeouts: {}
     };
   }
 
   componentDidMount () {
-    const soundfont = new Soundfont(new AudioContext());
+    this.context = new AudioContext();
+    const soundfont = new Soundfont(this.context);
     this.instruments = {
-      sine: soundfont.instrument(),
-      piano: soundfont.instrument('acoustic_grand_piano')
+      sine: {
+        play: soundfont.instrument().play,
+        isPolyphonic: false,
+        delay: 1.5
+      },
+      piano: {
+        play: soundfont.instrument('acoustic_grand_piano').play,
+        isPolyphonic: true,
+        delay: 1.5
+      }
     };
   }
 
   playNote = (e) => {
-    if(!note) var note = 'C4';
+    if(!note) var note = e.target.id || 'C4';
     this.endNote();
-    console.log('playing');
+    this.lastNote = note;
     this.setState({
       source: this.instruments[this.state.instrument].play(note, 0)
-    }, function () {
-      console.log('source recorded');
     });
   };
 
-  endNote = () => {
-    console.log('ending');
-    if (this.state.source) {
-      this.state.source.stop();
+  releaseNote = (e) => {
+    const state = this.state;
+    const note = state.lastNote;
+    if (note) {
+      const currentSource = state.sources[note];
+      state.stopNoteTimeouts[note] = setTimeout(() => {
+        this.stopNote(note);
+      }, this.instruments[state.instrument].delay * 1000);
+    }
+  };
+
+  stopNote = (note) => {
+    const stopNoteTimeouts = this.state.stopNoteTimeouts;
+    const timeout = stopNoteTimeouts[note];
+    if (timeout) {
+      clearTimeout(timeout);
+      stopNoteTimeouts[note] = null;
       this.setState({
-        source: null
-      }, () => {
-        console.log('source now null');
+        stopNoteTimeouts: stopNoteTimeouts
+      });
+    }
+    const sources = this.state.sources;
+    const source = this.state.sources[note];
+    if (source) {
+      source.stop(this.context.currentTime);
+      sources[note] = null;
+      this.setState({
+        sources: sources
       });
     }
   };
@@ -53,6 +82,11 @@ export default class PitchTool extends Component {
   };
 
   render () {
-    return <div onMouseDown={this.playNote} onMouseUp={this.endNote} onMouseLeave={this.endNote}>HERE I AM</div>;
+    return (
+      <div>
+        <div id='C4' onMouseDown={this.playNote} onMouseUp={this.releaseNote} onMouseLeave={this.releaseNote}>ONE</div>
+        <div id='G3' onMouseDown={this.playNote} onMouseUp={this.releaseNote} onMouseLeave={this.releaseNote}>TWO</div>
+      </div>
+    );
   }
 };

@@ -29,8 +29,8 @@
 
   var _Soundfont = _interopRequireDefault(_soundfontPlayer);
 
-  var PitchTool = (function (_React$Component) {
-    _inherits(PitchTool, _React$Component);
+  var PitchTool = (function (_Component) {
+    _inherits(PitchTool, _Component);
 
     function PitchTool(props) {
       var _this = this;
@@ -42,22 +42,16 @@
       this.playNote = function (e) {
         if (!note) var note = 'C4';
         _this.endNote();
-        console.log('playing');
         _this.setState({
           source: _this.instruments[_this.state.instrument].play(note, 0)
-        }, function () {
-          console.log('source recorded');
         });
       };
 
       this.endNote = function () {
-        console.log('ending');
         if (_this.state.source) {
-          _this.state.source.stop();
+          _this.state.source.stop(_this.context.currentTime + 0.5);
           _this.setState({
             source: null
-          }, function () {
-            console.log('source now null');
           });
         }
       };
@@ -72,7 +66,7 @@
       };
 
       this.state = {
-        instrument: 'sine',
+        instrument: 'piano',
         source: null
       };
     }
@@ -80,7 +74,8 @@
     _createClass(PitchTool, [{
       key: 'componentDidMount',
       value: function componentDidMount() {
-        var soundfont = new _Soundfont['default'](new AudioContext());
+        this.context = new AudioContext();
+        var soundfont = new _Soundfont['default'](this.context);
         this.instruments = {
           sine: soundfont.instrument(),
           piano: soundfont.instrument('acoustic_grand_piano')
@@ -98,7 +93,7 @@
     }]);
 
     return PitchTool;
-  })(_React['default'].Component);
+  })(_react.Component);
 
   module.exports = PitchTool;
   ;
