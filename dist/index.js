@@ -45,16 +45,14 @@
         _this.setState({
           pressed: true
         });
-        console.log('down');
-        _this.props.playNote(e, _this.props.note);
+        _this.props.playNote(_this.props.note, e);
       };
 
       this.releaseNote = function (e) {
         _this.setState({
           pressed: false
         });
-        console.log('up');
-        _this.props.releaseNote(e, _this.props.note);
+        _this.props.releaseNote(_this.props.note, e);
       };
 
       this.state = {
@@ -101,7 +99,7 @@
 
       _get(Object.getPrototypeOf(_default.prototype), 'constructor', this).call(this, props);
 
-      this.playNote = function (e, note) {
+      this.playNote = function (note) {
         var noteToStop = _this2.instruments[_this2.state.instrument].isPolyphonic ? note : _this2.state.lastNote;
         _this2.stopNote(noteToStop, function () {
           var sources = _this2.state.sources;
@@ -113,7 +111,7 @@
         });
       };
 
-      this.releaseNote = function (e, note) {
+      this.releaseNote = function (note) {
         if (!_this2.state.sources[note]) {
           return;
         }
@@ -148,32 +146,9 @@
         }
       };
 
-      this.swapInstrument = function (instrument) {
-        if (_this2.state.instrument === instrument) {
-          return;
-        }
-        if (Object.keys(_this2.instruments).indexOf(instrument) !== -1) {
-          _this2.setState({
-            instrument: instrument
-          });
-        }
-      };
-
-      this.shiftOctave = function (direction) {
-        var octave = _this2.state.octave;
-        if (direction === 'up' && octave < 6) {
-          octave++;
-        } else if (direction === 'down' && octave > 1) {
-          octave--;
-        }
-        _this2.setState({
-          octave: octave
-        });
-      };
-
       this.NOTES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
       this.state = {
-        instrument: 'sawtooth',
+        instrument: 'piano',
         lastNote: null,
         sources: {},
         stopNoteTimeouts: {},
@@ -186,40 +161,72 @@
       value: function componentDidMount() {
         this.context = new AudioContext();
         var soundfont = new _Soundfont['default'](this.context);
-        /* wrapper needed to get the soundfont-specific play
-         * method and not the default.
-         */
-        var playWrapper = function playWrapper(note, time, duration) {
-          /* 'this' is the instrument from which playWrapper is
-           * being called.
-           */
-          return this.sound.play(note, time, duration);
+        // in returned function, 'this' refers to the invoking instrument object.
+        var getWavePlayFn = function getWavePlayFn(vcoType) {
+          return function (note, time, duration) {
+            return this.player.play(note, time, duration, { vcoType: vcoType });
+          };
         };
         this.instruments = {
-          sine: {
-            play: soundfont.instrument().play,
-            isPolyphonic: false,
-            delay: 0.15
-          },
           piano: {
-            sound: soundfont.instrument('acoustic_grand_piano'),
-            play: playWrapper,
+            player: soundfont.instrument('acoustic_grand_piano'),
+            // necessary to get soundfont-specific play method
+            play: function play(note, time, duration) {
+              return this.player.play(note, time, duration);
+            },
             isPolyphonic: true,
             delay: 1.5
           },
+          sine: {
+            player: soundfont.instrument(),
+            play: getWavePlayFn('sine'),
+            isPolyphonic: false,
+            delay: 0.15
+          },
           square: {
-            sound: soundfont.instrument('lead_1_square'),
-            play: playWrapper,
+            player: soundfont.instrument(),
+            play: getWavePlayFn('square'),
+            isPolyphonic: false,
+            delay: 0.15
+          },
+          triangle: {
+            player: soundfont.instrument(),
+            play: getWavePlayFn('triangle'),
             isPolyphonic: false,
             delay: 0.15
           },
           sawtooth: {
-            sound: soundfont.instrument('lead_2_sawtooth'),
-            play: playWrapper,
+            player: soundfont.instrument(),
+            play: getWavePlayFn('sawtooth'),
             isPolyphonic: false,
             delay: 0.15
           }
         };
+      }
+    }, {
+      key: 'swapInstrument',
+      value: function swapInstrument(instrument) {
+        if (this.state.instrument === instrument) {
+          return;
+        }
+        if (Object.keys(this.instruments).indexOf(instrument) !== -1) {
+          this.setState({
+            instrument: instrument
+          });
+        }
+      }
+    }, {
+      key: 'shiftOctave',
+      value: function shiftOctave(direction) {
+        var octave = this.state.octave;
+        if (direction === 'left' && octave > 1) {
+          octave--;
+        } else if (direction === 'right' && octave < 6) {
+          octave++;
+        }
+        this.setState({
+          octave: octave
+        });
       }
     }, {
       key: 'render',
@@ -252,10 +259,67 @@
             playNote: _this3.playNote,
             releaseNote: _this3.releaseNote });
         });
+
         return _React['default'].createElement(
           'div',
-          { className: (0, _classNames['default'])('keys', 'selection-disabled') },
-          keys
+          { className: (0, _classNames['default'])('pitch-tool', 'selection-disabled') },
+          _React['default'].createElement(
+            'div',
+            { className: 'control-box' },
+            _React['default'].createElement(
+              'div',
+              { className: 'controls' },
+              _React['default'].createElement(
+                'div',
+                { className: 'controls-octave' },
+                _React['default'].createElement(
+                  'span',
+                  null,
+                  'Octave: '
+                ),
+                _React['default'].createElement(
+                  'span',
+                  { className: 'octave-shifter',
+                    onClick: this.shiftOctave.bind(this, 'left') },
+                  ' < '
+                ),
+                _React['default'].createElement(
+                  'span',
+                  null,
+                  this.state.octave
+                ),
+                _React['default'].createElement(
+                  'span',
+                  { className: 'octave-shifter',
+                    onClick: this.shiftOctave.bind(this, 'right') },
+                  ' > '
+                )
+              ),
+              _React['default'].createElement(
+                'div',
+                { className: 'controls-instrument' },
+                _React['default'].createElement(
+                  'span',
+                  { className: (0, _classNames['default'])('instrument-selector', { 'selected': this.state.instrument === 'piano' }),
+                    title: 'Piano',
+                    onClick: this.swapInstrument.bind(this, 'piano') },
+                  ' 🎹 '
+                ),
+                _React['default'].createElement(
+                  'span',
+                  { className: (0, _classNames['default'])('instrument-selector', { 'selected': this.state.instrument === 'sine' }),
+                    title: 'Sine Wave',
+                    onClick: this.swapInstrument.bind(this, 'sine') },
+                  ' ∿ '
+                )
+              )
+            )
+          ),
+          _React['default'].createElement(
+            'div',
+            { className: 'keys' },
+            keys
+          )
         );
       }
     }]);

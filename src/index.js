@@ -16,14 +16,14 @@ class Key extends Component {
     this.setState({
       pressed: true
     });
-    this.props.playNote(e, this.props.note);
+    this.props.playNote(this.props.note, e);
   };
 
   releaseNote = (e) => {
     this.setState({
       pressed: false
     });
-    this.props.releaseNote(e, this.props.note);
+    this.props.releaseNote(this.props.note, e);
   };
 
   getKeyNameDiv () {
@@ -54,7 +54,7 @@ export default class extends Component {
     super(props);
     this.NOTES = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb', 'B'];
     this.state = {
-      instrument: 'sawtooth',
+      instrument: 'piano',
       lastNote: null,
       sources: {},
       stopNoteTimeouts: {},
@@ -65,43 +65,50 @@ export default class extends Component {
   componentDidMount () {
     this.context = new AudioContext();
     const soundfont = new Soundfont(this.context);
-    /* wrapper needed to get the soundfont-specific play
-     * method and not the default.
-     */
-    const playWrapper = function (note, time, duration) {
-      /* 'this' is the instrument from which playWrapper is
-       * being called.
-       */
-      return this.sound.play(note, time, duration);
+    // in returned function, 'this' refers to the invoking instrument object.
+    var getWavePlayFn = function (vcoType) {
+      return function (note, time, duration) {
+        return this.player.play(note, time, duration, { vcoType: vcoType });
+      };
     };
     this.instruments = {
-      sine: {
-        play: soundfont.instrument().play,
-        isPolyphonic: false,
-        delay: 0.15
-      },
       piano: {
-        sound: soundfont.instrument('acoustic_grand_piano'),
-        play: playWrapper,
+        player: soundfont.instrument('acoustic_grand_piano'),
+        // necessary to get soundfont-specific play method
+        play: function (note, time, duration) {
+          return this.player.play(note, time, duration);
+        },
         isPolyphonic: true,
         delay: 1.5
       },
+      sine: {
+        player: soundfont.instrument(),
+        play: getWavePlayFn('sine'),
+        isPolyphonic: false,
+        delay: 0.15
+      },
       square: {
-        sound: soundfont.instrument('lead_1_square'),
-        play: playWrapper,
+        player: soundfont.instrument(),
+        play: getWavePlayFn('square'),
+        isPolyphonic: false,
+        delay: 0.15
+      },
+      triangle: {
+        player: soundfont.instrument(),
+        play: getWavePlayFn('triangle'),
         isPolyphonic: false,
         delay: 0.15
       },
       sawtooth: {
-        sound: soundfont.instrument('lead_2_sawtooth'),
-        play: playWrapper,
+        player: soundfont.instrument(),
+        play: getWavePlayFn('sawtooth'),
         isPolyphonic: false,
         delay: 0.15
       }
     };
   }
 
-  playNote = (e, note) => {
+  playNote = (note) => {
     const noteToStop = this.instruments[this.state.instrument].isPolyphonic ? note : this.state.lastNote;
     this.stopNote(noteToStop, () => {
       const sources = this.state.sources;
@@ -113,7 +120,7 @@ export default class extends Component {
     });
   };
 
-  releaseNote = (e, note) => {
+  releaseNote = (note) => {
     if (!this.state.sources[note]) {
       return;
     }
@@ -148,7 +155,7 @@ export default class extends Component {
     }
   };
 
-  swapInstrument = (instrument) => {
+  swapInstrument (instrument) {
     if (this.state.instrument === instrument) {
       return;
     }
@@ -159,12 +166,12 @@ export default class extends Component {
     }
   };
 
-  shiftOctave = (direction) => {
+  shiftOctave (direction) {
     let octave = this.state.octave;
-    if (direction === 'up' && octave < 6) {
-      octave++;
-    } else if (direction === 'down' && octave > 1) {
+    if (direction === 'left' && octave > 1) {
       octave--;
+    } else if (direction === 'right' && octave < 6) {
+      octave++;
     }
     this.setState({
       octave: octave
@@ -197,8 +204,30 @@ export default class extends Component {
     });
 
     return (
-      <div className={ classNames('keys', 'selection-disabled') }>
-        { keys }
+      <div className={ classNames('pitch-tool', 'selection-disabled') }>
+        <div className='control-box'>
+          <div className='controls'>
+            <div className='controls-octave'>
+              <span>Octave: </span>
+              <span className='octave-shifter'
+                    onClick={ this.shiftOctave.bind(this, 'left') }>{ ' < ' }</span>
+              <span>{ this.state.octave }</span>
+              <span className='octave-shifter'
+                    onClick={ this.shiftOctave.bind(this, 'right') }>{ ' > ' }</span>
+            </div>
+            <div className='controls-instrument'>
+              <span className={ classNames('instrument-selector', { 'selected': this.state.instrument === 'piano' }) }
+                    title='Piano'
+                    onClick={ this.swapInstrument.bind(this, 'piano') }>{ ' \ud83c\udfb9 ' }</span>
+              <span className={ classNames('instrument-selector', { 'selected': this.state.instrument === 'sine' }) }
+                    title='Sine Wave'
+                    onClick={ this.swapInstrument.bind(this, 'sine') }>{ ' \u223F ' }</span>
+            </div>
+          </div>
+        </div>
+        <div className='keys'>
+          { keys }
+        </div>
       </div>
     );
   }
