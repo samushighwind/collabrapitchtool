@@ -13,17 +13,18 @@ class Key extends Component {
   }
 
   playNote = (e) => {
-    this.setState({
-      pressed: true
-    });
-    this.props.playNote(this.props.note, e);
+    if (this.props.playNote(this.props.note, e)) {
+      this.setState({
+        pressed: true
+      });
+    }
   };
 
-  releaseNote = (e) => {
+  releaseNote = () => {
     this.setState({
       pressed: false
     });
-    this.props.releaseNote(this.props.note, e);
+    this.props.releaseNote(this.props.note);
   };
 
   getKeyNameDiv () {
@@ -39,6 +40,7 @@ class Key extends Component {
     return (
       <div className={ classNames(`${ this.props.color }-key`, { 'pressed': this.state.pressed }) }
            onMouseDown={ this.playNote }
+           onMouseEnter={ this.playNote }
            onMouseUp={ this.releaseNote }
            onMouseLeave={ this.releaseNote }>
         { this.getKeyNameDiv() }
@@ -58,7 +60,8 @@ export default class extends Component {
       lastNote: null,
       sources: {},
       stopNoteTimeouts: {},
-      octave: 3
+      octave: 3,
+      isMouseDown: false
     };
   }
 
@@ -79,7 +82,7 @@ export default class extends Component {
           return this.player.play(note, time, duration);
         },
         isPolyphonic: true,
-        delay: 1.5
+        delay: 1.1
       },
       sine: {
         player: soundfont.instrument(),
@@ -108,20 +111,31 @@ export default class extends Component {
     };
   }
 
-  playNote = (note) => {
+  playNote = (note, e) => {
+    if ((e.type === 'mouseenter' && !this.state.isMouseDown) || (e.type !== 'mouseenter' && this.state.isMouseDown)) {
+      return false;
+    }
     const noteToStop = this.instruments[this.state.instrument].isPolyphonic ? note : this.state.lastNote;
     this.stopNote(noteToStop, () => {
-      const sources = this.state.sources;
-      sources[note] = this.instruments[this.state.instrument].play(note, 0);
-      this.setState({
-        lastNote: note,
-        sources: sources
+      // releaseNote call will be removed if multitouch is supported
+      this.releaseNote(this.state.lastNote, () => {
+        const sources = this.state.sources;
+        sources[note] = this.instruments[this.state.instrument].play(note, 0);
+        this.setState({
+          lastNote: note,
+          sources: sources,
+          isMouseDown: true
+        });
       });
     });
+    return true;
   };
 
-  releaseNote = (note) => {
+  releaseNote = (note, cb) => {
     if (!this.state.sources[note]) {
+      if (cb) {
+        cb();
+      }
       return;
     }
     const state = this.state;
@@ -130,6 +144,9 @@ export default class extends Component {
         this.stopNote(note);
       }, this.instruments[state.instrument].delay * 1000);
     }
+    this.setState({
+      isMouseDown: false
+    }, cb);
   };
 
   stopNote = (note, cb) => {

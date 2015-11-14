@@ -42,17 +42,18 @@
       _get(Object.getPrototypeOf(Key.prototype), 'constructor', this).call(this, props);
 
       this.playNote = function (e) {
-        _this.setState({
-          pressed: true
-        });
-        _this.props.playNote(_this.props.note, e);
+        if (_this.props.playNote(_this.props.note, e)) {
+          _this.setState({
+            pressed: true
+          });
+        }
       };
 
-      this.releaseNote = function (e) {
+      this.releaseNote = function () {
         _this.setState({
           pressed: false
         });
-        _this.props.releaseNote(_this.props.note, e);
+        _this.props.releaseNote(_this.props.note);
       };
 
       this.state = {
@@ -79,6 +80,7 @@
           'div',
           { className: (0, _classNames['default'])(this.props.color + '-key', { 'pressed': this.state.pressed }),
             onMouseDown: this.playNote,
+            onMouseEnter: this.playNote,
             onMouseUp: this.releaseNote,
             onMouseLeave: this.releaseNote },
           this.getKeyNameDiv()
@@ -99,20 +101,31 @@
 
       _get(Object.getPrototypeOf(_default.prototype), 'constructor', this).call(this, props);
 
-      this.playNote = function (note) {
+      this.playNote = function (note, e) {
+        if (e.type === 'mouseenter' && !_this2.state.isMouseDown || e.type !== 'mouseenter' && _this2.state.isMouseDown) {
+          return false;
+        }
         var noteToStop = _this2.instruments[_this2.state.instrument].isPolyphonic ? note : _this2.state.lastNote;
         _this2.stopNote(noteToStop, function () {
-          var sources = _this2.state.sources;
-          sources[note] = _this2.instruments[_this2.state.instrument].play(note, 0);
-          _this2.setState({
-            lastNote: note,
-            sources: sources
+          // releaseNote call will be removed if multitouch is supported
+          _this2.releaseNote(_this2.state.lastNote, function () {
+            var sources = _this2.state.sources;
+            sources[note] = _this2.instruments[_this2.state.instrument].play(note, 0);
+            _this2.setState({
+              lastNote: note,
+              sources: sources,
+              isMouseDown: true
+            });
           });
         });
+        return true;
       };
 
-      this.releaseNote = function (note) {
+      this.releaseNote = function (note, cb) {
         if (!_this2.state.sources[note]) {
+          if (cb) {
+            cb();
+          }
           return;
         }
         var state = _this2.state;
@@ -121,6 +134,9 @@
             _this2.stopNote(note);
           }, _this2.instruments[state.instrument].delay * 1000);
         }
+        _this2.setState({
+          isMouseDown: false
+        }, cb);
       };
 
       this.stopNote = function (note, cb) {
@@ -152,7 +168,8 @@
         lastNote: null,
         sources: {},
         stopNoteTimeouts: {},
-        octave: 3
+        octave: 3,
+        isMouseDown: false
       };
     }
 
@@ -175,7 +192,7 @@
               return this.player.play(note, time, duration);
             },
             isPolyphonic: true,
-            delay: 1.5
+            delay: 1.1
           },
           sine: {
             player: soundfont.instrument(),
