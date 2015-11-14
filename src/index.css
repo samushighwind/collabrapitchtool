@@ -22,6 +22,11 @@
   justify-content: space-around;
 }
 
+.controls-octave,
+.controls-instrument {
+  align-self: center;
+}
+
 .controls span {
   cursor: default;
 }
@@ -35,6 +40,10 @@
 .instrument-selector.selected {
   color: #3a7a94;
   text-shadow: 0 0 16px #68bcff;
+}
+
+.instrument-selector {
+  font-size: 22px;
 }
 
 .keys {
