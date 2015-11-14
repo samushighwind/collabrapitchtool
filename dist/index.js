@@ -163,12 +163,15 @@
       };
 
       this.NOTES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+      this.OCTAVE_MIN = 1;
+      this.OCTAVE_MAX = 8;
+      this.NUMBER_OF_OCTAVES_TO_DISPLAY = 2;
       this.state = {
-        instrument: 'piano',
+        instrument: 'sine',
         lastNote: null,
         sources: {},
         stopNoteTimeouts: {},
-        octave: 3,
+        octave: 4,
         isMouseDown: false
       };
     }
@@ -236,9 +239,9 @@
       key: 'shiftOctave',
       value: function shiftOctave(direction) {
         var octave = this.state.octave;
-        if (direction === 'left' && octave > 1) {
+        if (direction === 'left' && octave > this.OCTAVE_MIN) {
           octave--;
-        } else if (direction === 'right' && octave < 6) {
+        } else if (direction === 'right' && octave < this.OCTAVE_MAX - this.NUMBER_OF_OCTAVES_TO_DISPLAY) {
           octave++;
         }
         this.setState({
@@ -250,7 +253,7 @@
       value: function render() {
         var _this3 = this;
 
-        var n = 2; // number of octaves to display
+        var n = this.NUMBER_OF_OCTAVES_TO_DISPLAY; // number of octaves to display
         var notes = [];
 
         var _loop = function (i, limit) {
@@ -296,9 +299,9 @@
                 ),
                 _React['default'].createElement(
                   'span',
-                  { className: 'octave-shifter',
+                  { className: (0, _classNames['default'])('octave-shifter', { 'exhausted': this.state.octave <= this.OCTAVE_MIN }),
                     onClick: this.shiftOctave.bind(this, 'left') },
-                  ' < '
+                  ' ‹ '
                 ),
                 _React['default'].createElement(
                   'span',
@@ -307,9 +310,9 @@
                 ),
                 _React['default'].createElement(
                   'span',
-                  { className: 'octave-shifter',
+                  { className: (0, _classNames['default'])('octave-shifter', { 'exhausted': this.state.octave >= this.OCTAVE_MAX - n }),
                     onClick: this.shiftOctave.bind(this, 'right') },
-                  ' > '
+                  ' › '
                 )
               ),
               _React['default'].createElement(

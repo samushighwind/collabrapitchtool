@@ -55,12 +55,15 @@ export default class extends Component {
   constructor (props) {
     super(props);
     this.NOTES = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb', 'B'];
+    this.OCTAVE_MIN = 1;
+    this.OCTAVE_MAX = 8;
+    this.NUMBER_OF_OCTAVES_TO_DISPLAY = 2;
     this.state = {
-      instrument: 'piano',
+      instrument: 'sine',
       lastNote: null,
       sources: {},
       stopNoteTimeouts: {},
-      octave: 3,
+      octave: 4,
       isMouseDown: false
     };
   }
@@ -185,9 +188,9 @@ export default class extends Component {
 
   shiftOctave (direction) {
     let octave = this.state.octave;
-    if (direction === 'left' && octave > 1) {
+    if (direction === 'left' && octave > this.OCTAVE_MIN) {
       octave--;
-    } else if (direction === 'right' && octave < 6) {
+    } else if (direction === 'right' && octave < this.OCTAVE_MAX - this.NUMBER_OF_OCTAVES_TO_DISPLAY) {
       octave++;
     }
     this.setState({
@@ -196,7 +199,7 @@ export default class extends Component {
   };
 
   render () {
-    const n = 2; // number of octaves to display
+    const n = this.NUMBER_OF_OCTAVES_TO_DISPLAY; // number of octaves to display
     const notes = [];
     for (let i = this.state.octave, limit = i + n; i < limit; i++) {
       this.NOTES.forEach((note) => {
@@ -226,11 +229,11 @@ export default class extends Component {
           <div className='controls'>
             <div className='controls-octave'>
               <span>Octave: </span>
-              <span className='octave-shifter'
-                    onClick={ this.shiftOctave.bind(this, 'left') }>{ ' < ' }</span>
+              <span className={ classNames('octave-shifter', { 'exhausted': this.state.octave <= this.OCTAVE_MIN }) }
+                    onClick={ this.shiftOctave.bind(this, 'left') }>{ ' \u2039 ' }</span>
               <span>{ this.state.octave }</span>
-              <span className='octave-shifter'
-                    onClick={ this.shiftOctave.bind(this, 'right') }>{ ' > ' }</span>
+              <span className={ classNames('octave-shifter', { 'exhausted': this.state.octave >= this.OCTAVE_MAX - n }) }
+                    onClick={ this.shiftOctave.bind(this, 'right') }>{ ' \u203a ' }</span>
             </div>
             <div className='controls-instrument'>
               <span className={ classNames('instrument-selector', { 'selected': this.state.instrument === 'piano' }) }
