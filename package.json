@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "babel --modules umd src/index.js > dist/index.js",
+    "build": "gulp && babel --modules umd src/index.js > dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,6 +16,10 @@
   "dependencies": {},
   "devDependencies": {
     "babel": "^5.8.23",
+    "classnames": "^2.2.0",
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-minify-css": "^1.2.1",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
     "soundfont-player": "^0.4.0"

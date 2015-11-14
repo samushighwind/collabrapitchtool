@@ -1,0 +1,53 @@
+.keys {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  font-family: Roboto, Sans-Serif;
+}
+
+.white-key,
+.black-key {
+  position: relative;
+  border: 1px outset;
+}
+
+.white-key {
+  background-color: #fff;
+  width: 100%;
+  height: 100%;
+}
+
+.white-key.pressed {
+  background-color: #eee;
+}
+
+.black-key {
+  background: linear-gradient(#222, #888);
+  color: #fff;
+  width: calc(60% / 15);
+  height: 60%;
+  z-index: 1;
+  position: absolute;
+  margin-left: calc(-30% / 15);
+}
+
+.black-key.pressed {
+  background: linear-gradient(#888, #222);
+}
+
+.key-name {
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 18px;
+  color: #999;
+}
+
+.selection-disabled {
+  -webkit-touch-callout: none;
+  user-select: none;
+}
