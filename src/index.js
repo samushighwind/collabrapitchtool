@@ -64,7 +64,8 @@ export default class extends Component {
       sources: {},
       stopNoteTimeouts: {},
       octave: 4,
-      isMouseDown: false
+      isMouseDown: false,
+      widthAndHeight: this.getWidthAndHeight(props)
     };
   }
 
@@ -111,6 +112,65 @@ export default class extends Component {
         isPolyphonic: false,
         delay: 0.15
       }
+    };
+  }
+
+  componentWillReceiveProps (props) {
+    this.setState({
+      widthAndHeight: this.getWidthAndHeight(props)
+    });
+  }
+
+  getWidthAndHeight (props) {
+    const getVal = (input) => {
+      if (!input) {
+        return null;
+      } else if (!isNaN(input)) {
+        return input;
+      } else if (/(\d+)(px|%|vw|vh|vmin|vmax|em|ex|cm|mm|in|pt|pc|ch|rem)$/.test(input)) {
+        return input;
+      }
+      return null;
+    };
+    const getSuffix = (val) => {
+      if (!val) {
+        return null;
+      } else if (!isNaN(val)) {
+        return 'px';
+      }
+      const intVal = parseInt(val);
+      const floatVal = parseFloat(val);
+      return val.replace(intVal.toString(), '').replace(floatVal.toString(), '');
+    };
+
+    const width = getVal(props.width);
+    const height = getVal(props.height);
+    const widthSuffix = getSuffix(width);
+    const heightSuffix = getSuffix(height);
+    const widthVal = isNaN(width) ? width.replace(widthSuffix, '') : width;
+    const heightVal = isNaN(height) ? height.replace(heightSuffix, '') : height;
+
+    if (width && height) {
+      return {
+        width: `${ widthVal }${ widthSuffix }`,
+        height: `${ heightVal }${ heightSuffix }`
+      };
+    }
+    if (this.props.width) {
+      return {
+        width: `${ widthVal }${ widthSuffix }`,
+        height: widthSuffix === '%' ? '100%' : `${ widthVal / 3 }${ widthSuffix }`
+      };
+    }
+    if (this.props.height) {
+      return {
+        width: heightSuffix === '%' ? '100%' : `${ heightVal * 3 }${ heightSuffix }`,
+        height: `${ heightVal }${ heightSuffix }`
+      };
+    }
+    return {
+      width: '100%',
+      height: '100%'
     };
   }
 
@@ -224,29 +284,31 @@ export default class extends Component {
     });
 
     return (
-      <div className={ classNames('pitch-tool', 'selection-disabled') }>
-        <div className='control-box'>
-          <div className='controls'>
-            <div className='controls-octave'>
-              <span>Octave: </span>
-              <span className={ classNames('octave-shifter', { 'exhausted': this.state.octave <= this.OCTAVE_MIN }) }
-                    onClick={ this.shiftOctave.bind(this, 'left') }>{ ' \u2039 ' }</span>
-              <span>{ this.state.octave }</span>
-              <span className={ classNames('octave-shifter', { 'exhausted': this.state.octave >= this.OCTAVE_MAX - n }) }
-                    onClick={ this.shiftOctave.bind(this, 'right') }>{ ' \u203a ' }</span>
-            </div>
-            <div className='controls-instrument'>
-              <span className={ classNames('instrument-selector', { 'selected': this.state.instrument === 'piano' }) }
-                    title='Piano'
-                    onClick={ this.swapInstrument.bind(this, 'piano') }>{ ' \ud83c\udfb9 ' }</span>
-              <span className={ classNames('instrument-selector', { 'selected': this.state.instrument === 'sine' }) }
-                    title='Sine Wave'
-                    onClick={ this.swapInstrument.bind(this, 'sine') }>{ ' \u223F ' }</span>
+      <div className='pitch-tool-container' style={ this.state.widthAndHeight }>
+        <div className={ classNames('pitch-tool', 'selection-disabled') }>
+          <div className='control-box'>
+            <div className='controls'>
+              <div className='controls-octave'>
+                <span>Octave: </span>
+                <span className={ classNames('octave-shifter', { 'exhausted': this.state.octave <= this.OCTAVE_MIN }) }
+                      onClick={ this.shiftOctave.bind(this, 'left') }>{ ' \u2039 ' }</span>
+                <span>{ this.state.octave }</span>
+                <span className={ classNames('octave-shifter', { 'exhausted': this.state.octave >= this.OCTAVE_MAX - n }) }
+                      onClick={ this.shiftOctave.bind(this, 'right') }>{ ' \u203a ' }</span>
+              </div>
+              <div className='controls-instrument'>
+                <span className={ classNames('instrument-selector', { 'selected': this.state.instrument === 'piano' }) }
+                      title='Piano'
+                      onClick={ this.swapInstrument.bind(this, 'piano') }>{ ' \ud83c\udfb9 ' }</span>
+                <span className={ classNames('instrument-selector', { 'selected': this.state.instrument === 'sine' }) }
+                      title='Sine Wave'
+                      onClick={ this.swapInstrument.bind(this, 'sine') }>{ ' \u223F ' }</span>
+              </div>
             </div>
           </div>
-        </div>
-        <div className='keys'>
-          { keys }
+          <div className='keys'>
+            { keys }
+          </div>
         </div>
       </div>
     );

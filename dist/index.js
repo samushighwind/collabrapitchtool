@@ -172,7 +172,8 @@
         sources: {},
         stopNoteTimeouts: {},
         octave: 4,
-        isMouseDown: false
+        isMouseDown: false,
+        widthAndHeight: this.getWidthAndHeight(props)
       };
     }
 
@@ -221,6 +222,67 @@
             isPolyphonic: false,
             delay: 0.15
           }
+        };
+      }
+    }, {
+      key: 'componentWillReceiveProps',
+      value: function componentWillReceiveProps(props) {
+        this.setState({
+          widthAndHeight: this.getWidthAndHeight(props)
+        });
+      }
+    }, {
+      key: 'getWidthAndHeight',
+      value: function getWidthAndHeight(props) {
+        var getVal = function getVal(input) {
+          if (!input) {
+            return null;
+          } else if (!isNaN(input)) {
+            return input;
+          } else if (/(\d+)(px|%|vw|vh|vmin|vmax|em|ex|cm|mm|in|pt|pc|ch|rem)$/.test(input)) {
+            return input;
+          }
+          return null;
+        };
+        var getSuffix = function getSuffix(val) {
+          if (!val) {
+            return null;
+          } else if (!isNaN(val)) {
+            return 'px';
+          }
+          var intVal = parseInt(val);
+          var floatVal = parseFloat(val);
+          return val.replace(intVal.toString(), '').replace(floatVal.toString(), '');
+        };
+
+        var width = getVal(props.width);
+        var height = getVal(props.height);
+        var widthSuffix = getSuffix(width);
+        var heightSuffix = getSuffix(height);
+        var widthVal = isNaN(width) ? width.replace(widthSuffix, '') : width;
+        var heightVal = isNaN(height) ? height.replace(heightSuffix, '') : height;
+
+        if (width && height) {
+          return {
+            width: '' + widthVal + widthSuffix,
+            height: '' + heightVal + heightSuffix
+          };
+        }
+        if (this.props.width) {
+          return {
+            width: '' + widthVal + widthSuffix,
+            height: widthSuffix === '%' ? '100%' : '' + widthVal / 3 + widthSuffix
+          };
+        }
+        if (this.props.height) {
+          return {
+            width: heightSuffix === '%' ? '100%' : '' + heightVal * 3 + heightSuffix,
+            height: '' + heightVal + heightSuffix
+          };
+        }
+        return {
+          width: '100%',
+          height: '100%'
         };
       }
     }, {
@@ -282,63 +344,67 @@
 
         return _React['default'].createElement(
           'div',
-          { className: (0, _classNames['default'])('pitch-tool', 'selection-disabled') },
+          { style: this.state.widthAndHeight },
           _React['default'].createElement(
             'div',
-            { className: 'control-box' },
+            { className: (0, _classNames['default'])('pitch-tool', 'selection-disabled') },
             _React['default'].createElement(
               'div',
-              { className: 'controls' },
+              { className: 'control-box' },
               _React['default'].createElement(
                 'div',
-                { className: 'controls-octave' },
+                { className: 'controls' },
                 _React['default'].createElement(
-                  'span',
-                  null,
-                  'Octave: '
+                  'div',
+                  { className: 'controls-octave' },
+                  _React['default'].createElement(
+                    'span',
+                    null,
+                    'Octave: '
+                  ),
+                  _React['default'].createElement(
+                    'span',
+                    { className: (0, _classNames['default'])('octave-shifter', { 'exhausted': this.state.octave <= this.OCTAVE_MIN }),
+                      onClick: this.shiftOctave.bind(this, 'left') },
+                    ' ‹ '
+                  ),
+                  _React['default'].createElement(
+                    'span',
+                    null,
+                    this.state.octave
+                  ),
+                  _React['default'].createElement(
+                    'span',
+                    { className: (0, _classNames['default'])('octave-shifter', { 'exhausted': this.state.octave >= this.OCTAVE_MAX - n }),
+                      onClick: this.shiftOctave.bind(this, 'right') },
+                    ' › '
+                  )
                 ),
                 _React['default'].createElement(
-                  'span',
-                  { className: (0, _classNames['default'])('octave-shifter', { 'exhausted': this.state.octave <= this.OCTAVE_MIN }),
-                    onClick: this.shiftOctave.bind(this, 'left') },
-                  ' ‹ '
-                ),
-                _React['default'].createElement(
-                  'span',
-                  null,
-                  this.state.octave
-                ),
-                _React['default'].createElement(
-                  'span',
-                  { className: (0, _classNames['default'])('octave-shifter', { 'exhausted': this.state.octave >= this.OCTAVE_MAX - n }),
-                    onClick: this.shiftOctave.bind(this, 'right') },
-                  ' › '
-                )
-              ),
-              _React['default'].createElement(
-                'div',
-                { className: 'controls-instrument' },
-                _React['default'].createElement(
-                  'span',
-                  { className: (0, _classNames['default'])('instrument-selector', { 'selected': this.state.instrument === 'piano' }),
-                    title: 'Piano',
-                    onClick: this.swapInstrument.bind(this, 'piano') },
-                  ' 🎹 '
-                ),
-                _React['default'].createElement(
-                  'span',
-                  { className: (0, _classNames['default'])('instrument-selector', { 'selected': this.state.instrument === 'sine' }),
-                    title: 'Sine Wave',
-                    onClick: this.swapInstrument.bind(this, 'sine') },
-                  ' ∿ '
+                  'div',
+                  { className: 'controls-instrument' },
+                  _React['default'].createElement(
+                    'span',
+                    { className: (0, _classNames['default'])('instrument-selector', { 'selected': this.state.instrument === 'piano' }),
+                      title: 'Piano',
+                      onClick: this.swapInstrument.bind(this, 'piano') },
+                    ' 🎹 '
+                  ),
+                  _React['default'].createElement(
+                    'span',
+                    { className: (0, _classNames['default'])('instrument-selector', { 'selected': this.state.instrument === 'sine' }),
+                      title: 'Sine Wave',
+                      onClick: this.swapInstrument.bind(this, 'sine') },
+                    ' ∿ '
+                  )
                 )
               )
+            ),
+            _React['default'].createElement(
+              'div',
+              { className: 'keys' },
+              keys
             )
-          ),
-          _React['default'].createElement(
-            'div',
-            { className: 'keys' },
-            keys
           )
         );
       }
