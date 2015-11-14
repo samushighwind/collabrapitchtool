@@ -6,7 +6,7 @@
   font-size: 18px;
 }
 
-.control-box {
+.pitch-tool .control-box {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -16,43 +16,43 @@
   height: 30%;
 }
 
-.controls {
+.pitch-tool .controls {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   color: #333;
 }
 
-.controls-octave,
-.controls-instrument {
+.pitch-tool .controls-octave,
+.pitch-tool .controls-instrument {
   align-self: center;
 }
 
-.controls span {
+.pitch-tool .controls span {
   cursor: default;
 }
 
-.octave-shifter,
-.instrument-selector {
+.pitch-tool .octave-shifter,
+.pitch-tool .instrument-selector {
   font-weight: bold;
   font-size: 24px;
 }
 
-.octave-shifter:active:not(.exhausted),
-.instrument-selector.selected {
+.pitch-tool .octave-shifter:active:not(.exhausted),
+.pitch-tool .instrument-selector.selected {
   color: #3a7a94;
   text-shadow: 0 0 16px #68bcff;
 }
 
-.octave-shifter.exhausted {
+.pitch-tool .octave-shifter.exhausted {
   color: #aaa;
 }
 
-.instrument-selector {
+.pitch-tool .instrument-selector {
   font-size: 22px;
 }
 
-.keys {
+.pitch-tool .keys {
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -60,23 +60,23 @@
   position: relative;
 }
 
-.white-key,
-.black-key {
+.pitch-tool .white-key,
+.pitch-tool .black-key {
   position: relative;
   border: 1px outset;
 }
 
-.white-key {
+.pitch-tool .white-key {
   background-color: #fff;
   width: 100%;
   height: 100%;
 }
 
-.white-key.pressed {
+.pitch-tool .white-key.pressed {
   background-color: #eee;
 }
 
-.black-key {
+.pitch-tool .black-key {
   background: linear-gradient(#222, #888);
   color: #fff;
   width: calc(60% / 15);
@@ -86,11 +86,11 @@
   margin-left: calc(-30% / 15);
 }
 
-.black-key.pressed {
+.pitch-tool .black-key.pressed {
   background: linear-gradient(#888, #222);
 }
 
-.key-name {
+.pitch-tool .key-name {
   position: absolute;
   bottom: 2%;
   left: 0;
@@ -100,7 +100,7 @@
   cursor: default;
 }
 
-.selection-disabled {
+.pitch-tool.selection-disabled {
   -webkit-touch-callout: none;
   user-select: none;
 }
