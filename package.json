@@ -22,6 +22,6 @@
     "gulp-minify-css": "^1.2.1",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
-    "soundfont-player": "^0.4.0"
+    "soundfont-player": "git+https://github.com/CollabraMusic/soundfont-player.git"
   }
 }

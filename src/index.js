@@ -75,7 +75,7 @@ export default class extends Component {
     // in returned function, 'this' refers to the invoking instrument object.
     var getWavePlayFn = function (vcoType) {
       return function (note, time, duration) {
-        return this.player.play(note, time, duration, { vcoType: vcoType });
+        return this.player.play(note, time, duration, { vcoType: vcoType, noStop: true });
       };
     };
     this.instruments = {

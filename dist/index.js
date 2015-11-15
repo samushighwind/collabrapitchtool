@@ -185,7 +185,7 @@
         // in returned function, 'this' refers to the invoking instrument object.
         var getWavePlayFn = function getWavePlayFn(vcoType) {
           return function (note, time, duration) {
-            return this.player.play(note, time, duration, { vcoType: vcoType });
+            return this.player.play(note, time, duration, { vcoType: vcoType, noStop: true });
           };
         };
         this.instruments = {
@@ -344,7 +344,7 @@
 
         return _React['default'].createElement(
           'div',
-          { style: this.state.widthAndHeight },
+          { className: 'pitch-tool-container', style: this.state.widthAndHeight },
           _React['default'].createElement(
             'div',
             { className: (0, _classNames['default'])('pitch-tool', 'selection-disabled') },
