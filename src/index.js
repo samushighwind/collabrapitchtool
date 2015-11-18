@@ -40,8 +40,10 @@ class Key extends Component {
     return (
       <div className={ classNames(`${ this.props.color }-key`, { 'pressed': this.state.pressed }) }
            onMouseDown={ this.playNote }
+           onTouchStart={ this.playNote }
            onMouseEnter={ this.playNote }
            onMouseUp={ this.releaseNote }
+           onTouchEnd={ this.releaseNote }
            onMouseLeave={ this.releaseNote }>
         { this.getKeyNameDiv() }
 
@@ -204,6 +206,9 @@ export default class extends Component {
   };
 
   playNote = (note, e) => {
+    if (e.type === 'touchstart') {
+      e.preventDefault();
+    }
     if ((e.type === 'mouseenter' && !this.state.isMouseDown) || (e.type !== 'mouseenter' && this.state.isMouseDown)) {
       return false;
     }

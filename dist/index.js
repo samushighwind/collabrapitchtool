@@ -82,8 +82,10 @@
           'div',
           { className: (0, _classNames2['default'])(this.props.color + '-key', { 'pressed': this.state.pressed }),
             onMouseDown: this.playNote,
+            onTouchStart: this.playNote,
             onMouseEnter: this.playNote,
             onMouseUp: this.releaseNote,
+            onTouchEnd: this.releaseNote,
             onMouseLeave: this.releaseNote },
           this.getKeyNameDiv()
         );
@@ -120,6 +122,9 @@
       };
 
       this.playNote = function (note, e) {
+        if (e.type === 'touchstart') {
+          e.preventDefault();
+        }
         if (e.type === 'mouseenter' && !_this2.state.isMouseDown || e.type !== 'mouseenter' && _this2.state.isMouseDown) {
           return false;
         }
