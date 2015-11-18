@@ -147,8 +147,8 @@ export default class extends Component {
     const height = getVal(props.height);
     const widthSuffix = getSuffix(width);
     const heightSuffix = getSuffix(height);
-    const widthVal = isNaN(width) ? width.replace(widthSuffix, '') : width;
-    const heightVal = isNaN(height) ? height.replace(heightSuffix, '') : height;
+    const widthVal = width && isNaN(width) ? width.replace(widthSuffix, '') : width;
+    const heightVal = height && isNaN(height) ? height.replace(heightSuffix, '') : height;
 
     if (width && height) {
       return {
@@ -156,13 +156,13 @@ export default class extends Component {
         height: `${ heightVal }${ heightSuffix }`
       };
     }
-    if (this.props.width) {
+    if (width) {
       return {
         width: `${ widthVal }${ widthSuffix }`,
         height: widthSuffix === '%' ? '100%' : `${ widthVal / 3 }${ widthSuffix }`
       };
     }
-    if (this.props.height) {
+    if (height) {
       return {
         width: heightSuffix === '%' ? '100%' : `${ heightVal * 3 }${ heightSuffix }`,
         height: `${ heightVal }${ heightSuffix }`
