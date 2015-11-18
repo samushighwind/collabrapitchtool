@@ -58,6 +58,8 @@ export default class extends Component {
     this.OCTAVE_MIN = 1;
     this.OCTAVE_MAX = 8;
     this.NUMBER_OF_OCTAVES_TO_DISPLAY = 2;
+    this.BREAKPOINTS = [600, 800, 1000, 1200, 1400, 1600, 1800];
+    this.CONTAINER_CLASS_NAME = 'pitch-tool-container';
     this.state = {
       instrument: 'sine',
       lastNote: null,
@@ -65,11 +67,15 @@ export default class extends Component {
       stopNoteTimeouts: {},
       octave: 4,
       isMouseDown: false,
-      widthAndHeight: this.getWidthAndHeight(props)
+      widthAndHeight: this.getWidthAndHeight(props),
+      actualWidth: null
     };
   }
 
   componentDidMount () {
+    this.computeActualWidth();
+    window.addEventListener('resize', this.computeActualWidth);
+
     const soundfont = new Soundfont(new AudioContext());
     // in returned function, 'this' refers to the invoking instrument object.
     var getWavePlayFn = function (vcoType) {
@@ -112,6 +118,14 @@ export default class extends Component {
         delay: 0.15
       }
     };
+  }
+
+  componentDidUpdate () {
+    this.computeActualWidth();
+  }
+
+  componentWillUnmount () {
+    window.removeEventListener('resize', this.computeActualWidth);
   }
 
   componentWillReceiveProps (props) {
@@ -172,6 +186,22 @@ export default class extends Component {
       height: '100%'
     };
   }
+
+  computeActualWidth = () => {
+    if (!this.doNotComputeWidthOnNextUpdate) {
+      window.requestAnimationFrame(() => {
+        this.setState({
+          /* undesirable to break abstraction, but necessary since using refs inside
+           * a separate component module will break React.
+           */
+          actualWidth: document.querySelector(`.${ this.CONTAINER_CLASS_NAME }`).getBoundingClientRect().width
+        });
+      });
+      this.doNotComputeWidthOnNextUpdate = true;
+    } else {
+      this.doNotComputeWidthOnNextUpdate = false;
+    }
+  };
 
   playNote = (note, e) => {
     if ((e.type === 'mouseenter' && !this.state.isMouseDown) || (e.type !== 'mouseenter' && this.state.isMouseDown)) {
@@ -282,26 +312,42 @@ export default class extends Component {
       );
     });
 
+    const actualWidth = this.state.actualWidth;
+    let widthClass = '';
+    if (actualWidth) {
+      const breakpoints = this.BREAKPOINTS;
+      for (let i = breakpoints.length - 1; i >= 0; i--) {
+        const breakpoint = breakpoints[i];
+        if (actualWidth >= breakpoint) {
+          widthClass = `above-${ breakpoint }`;
+          break;
+        }
+      }
+    }
+
     return (
-      <div className='pitch-tool-container' style={ this.state.widthAndHeight }>
-        <div className={ classNames('pitch-tool', 'selection-disabled') }>
+      <div className={ this.CONTAINER_CLASS_NAME } style={ this.state.widthAndHeight }>
+        <div className={ classNames('pitch-tool', 'selection-disabled', { [widthClass]: widthClass }) }>
           <div className='control-box'>
             <div className='controls'>
               <div className='controls-octave'>
-                <span>Octave: </span>
+                <span className='control-label'>Octave: </span>
                 <span className={ classNames('octave-shifter', { 'exhausted': this.state.octave <= this.OCTAVE_MIN }) }
-                      onClick={ this.shiftOctave.bind(this, 'left') }>{ ' \u2039 ' }</span>
+                      title='Shift down one octave'
+                      onClick={ this.shiftOctave.bind(this, 'left') }>{ '\u2039' }</span>
                 <span>{ this.state.octave }</span>
                 <span className={ classNames('octave-shifter', { 'exhausted': this.state.octave >= this.OCTAVE_MAX - n }) }
-                      onClick={ this.shiftOctave.bind(this, 'right') }>{ ' \u203a ' }</span>
+                      title='Shift up one octave'
+                      onClick={ this.shiftOctave.bind(this, 'right') }>{ '\u203a' }</span>
               </div>
               <div className='controls-instrument'>
+                <span className='control-label'>Sound: </span>
                 <span className={ classNames('instrument-selector', { 'selected': this.state.instrument === 'piano' }) }
                       title='Piano'
-                      onClick={ this.swapInstrument.bind(this, 'piano') }>{ ' \ud83c\udfb9 ' }</span>
+                      onClick={ this.swapInstrument.bind(this, 'piano') }>{ '\ud83c\udfb9' }</span>
                 <span className={ classNames('instrument-selector', { 'selected': this.state.instrument === 'sine' }) }
                       title='Sine Wave'
-                      onClick={ this.swapInstrument.bind(this, 'sine') }>{ ' \u223F ' }</span>
+                      onClick={ this.swapInstrument.bind(this, 'sine') }>{ '\u223F' }</span>
               </div>
             </div>
           </div>

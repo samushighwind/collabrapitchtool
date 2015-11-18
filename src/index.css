@@ -3,7 +3,6 @@
   height: 100%;
   border: 1px solid #333;
   font-family: Roboto, Sans-Serif;
-  font-size: 18px;
 }
 
 .pitch-tool .control-box {
@@ -21,6 +20,35 @@
   flex-direction: row;
   justify-content: space-around;
   color: #333;
+  font-size: 18px;
+}
+
+.pitch-tool.above-600 .controls {
+  font-size: 24px;
+}
+
+.pitch-tool.above-800 .controls {
+  font-size: 30px;
+}
+
+.pitch-tool.above-1000 .controls {
+  font-size: 36px;
+}
+
+.pitch-tool.above-1200 .controls {
+  font-size: 42px;
+}
+
+.pitch-tool.above-1400 .controls {
+  font-size: 48px;
+}
+
+.pitch-tool.above-1600 .controls {
+  font-size: 54px;
+}
+
+.pitch-tool.above-1800 .controls {
+  font-size: 60px;
 }
 
 .pitch-tool .controls-octave,
@@ -32,16 +60,27 @@
   cursor: default;
 }
 
-.pitch-tool .octave-shifter,
-.pitch-tool .instrument-selector {
+.pitch-tool .control-label {
+  color: #666;
+}
+
+.pitch-tool .octave-shifter {
   font-weight: bold;
-  font-size: 24px;
+  font-size: 1.33em;
+  margin-left: calc(1.33em / 5);
+  margin-right: calc(1.33em / 5);
+}
+
+.pitch-tool .octave-shifter:hover:not(.exhausted),
+.pitch-tool .instrument-selector:hover:not(.exhausted),
+.pitch-tool .octave-shifter:active:not(.exhausted),
+.pitch-tool .instrument-selector.selected {
+  text-shadow: 0 0 16px #68bcff;
 }
 
 .pitch-tool .octave-shifter:active:not(.exhausted),
 .pitch-tool .instrument-selector.selected {
   color: #3a7a94;
-  text-shadow: 0 0 16px #68bcff;
 }
 
 .pitch-tool .octave-shifter.exhausted {
@@ -49,7 +88,21 @@
 }
 
 .pitch-tool .instrument-selector {
-  font-size: 22px;
+  font-size: 1.22em;
+  margin-left: calc(1.22em / 8);
+  margin-right: calc(1.22em / 8);
+}
+
+.pitch-tool.above-600 .instrument-selector,
+.pitch-tool.above-800 .instrument-selector,
+.pitch-tool.above-1000 .instrument-selector,
+.pitch-tool.above-1200 .instrument-selector,
+.pitch-tool.above-1400 .instrument-selector,
+.pitch-tool.above-1600 .instrument-selector,
+.pitch-tool.above-1800 .instrument-selector {
+  padding: calc(1.22em / 8) calc(1.22em / 4);
+  border: 1px solid #aaa;
+  border-radius: calc(1.22em / 6);
 }
 
 .pitch-tool .keys {
@@ -98,6 +151,7 @@
   text-align: center;
   color: #aaa;
   cursor: default;
+  font-size: 18px;
 }
 
 .pitch-tool.selection-disabled {

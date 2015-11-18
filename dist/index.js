@@ -19,6 +19,8 @@
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
   function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
@@ -29,7 +31,7 @@
 
   var _Soundfont = _interopRequireDefault(_soundfontPlayer);
 
-  var _classNames = _interopRequireDefault(_classnames);
+  var _classNames2 = _interopRequireDefault(_classnames);
 
   var Key = (function (_Component) {
     _inherits(Key, _Component);
@@ -78,7 +80,7 @@
       value: function render() {
         return _React['default'].createElement(
           'div',
-          { className: (0, _classNames['default'])(this.props.color + '-key', { 'pressed': this.state.pressed }),
+          { className: (0, _classNames2['default'])(this.props.color + '-key', { 'pressed': this.state.pressed }),
             onMouseDown: this.playNote,
             onMouseEnter: this.playNote,
             onMouseUp: this.releaseNote,
@@ -100,6 +102,22 @@
       _classCallCheck(this, _default);
 
       _get(Object.getPrototypeOf(_default.prototype), 'constructor', this).call(this, props);
+
+      this.computeActualWidth = function () {
+        if (!_this2.doNotComputeWidthOnNextUpdate) {
+          window.requestAnimationFrame(function () {
+            _this2.setState({
+              /* undesirable to break abstraction, but necessary since using refs inside
+               * a separate component module will break React.
+               */
+              actualWidth: document.querySelector('.' + _this2.CONTAINER_CLASS_NAME).getBoundingClientRect().width
+            });
+          });
+          _this2.doNotComputeWidthOnNextUpdate = true;
+        } else {
+          _this2.doNotComputeWidthOnNextUpdate = false;
+        }
+      };
 
       this.playNote = function (note, e) {
         if (e.type === 'mouseenter' && !_this2.state.isMouseDown || e.type !== 'mouseenter' && _this2.state.isMouseDown) {
@@ -166,6 +184,8 @@
       this.OCTAVE_MIN = 1;
       this.OCTAVE_MAX = 8;
       this.NUMBER_OF_OCTAVES_TO_DISPLAY = 2;
+      this.BREAKPOINTS = [600, 800, 1000, 1200, 1400, 1600, 1800];
+      this.CONTAINER_CLASS_NAME = 'pitch-tool-container';
       this.state = {
         instrument: 'sine',
         lastNote: null,
@@ -173,13 +193,17 @@
         stopNoteTimeouts: {},
         octave: 4,
         isMouseDown: false,
-        widthAndHeight: this.getWidthAndHeight(props)
+        widthAndHeight: this.getWidthAndHeight(props),
+        actualWidth: null
       };
     }
 
     _createClass(_default, [{
       key: 'componentDidMount',
       value: function componentDidMount() {
+        this.computeActualWidth();
+        window.addEventListener('resize', this.computeActualWidth);
+
         var soundfont = new _Soundfont['default'](new AudioContext());
         // in returned function, 'this' refers to the invoking instrument object.
         var getWavePlayFn = function getWavePlayFn(vcoType) {
@@ -222,6 +246,16 @@
             delay: 0.15
           }
         };
+      }
+    }, {
+      key: 'componentDidUpdate',
+      value: function componentDidUpdate() {
+        this.computeActualWidth();
+      }
+    }, {
+      key: 'componentWillUnmount',
+      value: function componentWillUnmount() {
+        window.removeEventListener('resize', this.computeActualWidth);
       }
     }, {
       key: 'componentWillReceiveProps',
@@ -341,12 +375,25 @@
             releaseNote: _this3.releaseNote });
         });
 
+        var actualWidth = this.state.actualWidth;
+        var widthClass = '';
+        if (actualWidth) {
+          var breakpoints = this.BREAKPOINTS;
+          for (var i = breakpoints.length - 1; i >= 0; i--) {
+            var breakpoint = breakpoints[i];
+            if (actualWidth >= breakpoint) {
+              widthClass = 'above-' + breakpoint;
+              break;
+            }
+          }
+        }
+
         return _React['default'].createElement(
           'div',
-          { className: 'pitch-tool-container', style: this.state.widthAndHeight },
+          { className: this.CONTAINER_CLASS_NAME, style: this.state.widthAndHeight },
           _React['default'].createElement(
             'div',
-            { className: (0, _classNames['default'])('pitch-tool', 'selection-disabled') },
+            { className: (0, _classNames2['default'])('pitch-tool', 'selection-disabled', _defineProperty({}, widthClass, widthClass)) },
             _React['default'].createElement(
               'div',
               { className: 'control-box' },
@@ -358,14 +405,15 @@
                   { className: 'controls-octave' },
                   _React['default'].createElement(
                     'span',
-                    null,
+                    { className: 'control-label' },
                     'Octave: '
                   ),
                   _React['default'].createElement(
                     'span',
-                    { className: (0, _classNames['default'])('octave-shifter', { 'exhausted': this.state.octave <= this.OCTAVE_MIN }),
+                    { className: (0, _classNames2['default'])('octave-shifter', { 'exhausted': this.state.octave <= this.OCTAVE_MIN }),
+                      title: 'Shift down one octave',
                       onClick: this.shiftOctave.bind(this, 'left') },
-                    ' ‹ '
+                    '‹'
                   ),
                   _React['default'].createElement(
                     'span',
@@ -374,9 +422,10 @@
                   ),
                   _React['default'].createElement(
                     'span',
-                    { className: (0, _classNames['default'])('octave-shifter', { 'exhausted': this.state.octave >= this.OCTAVE_MAX - n }),
+                    { className: (0, _classNames2['default'])('octave-shifter', { 'exhausted': this.state.octave >= this.OCTAVE_MAX - n }),
+                      title: 'Shift up one octave',
                       onClick: this.shiftOctave.bind(this, 'right') },
-                    ' › '
+                    '›'
                   )
                 ),
                 _React['default'].createElement(
@@ -384,17 +433,22 @@
                   { className: 'controls-instrument' },
                   _React['default'].createElement(
                     'span',
-                    { className: (0, _classNames['default'])('instrument-selector', { 'selected': this.state.instrument === 'piano' }),
-                      title: 'Piano',
-                      onClick: this.swapInstrument.bind(this, 'piano') },
-                    ' 🎹 '
+                    { className: 'control-label' },
+                    'Sound: '
                   ),
                   _React['default'].createElement(
                     'span',
-                    { className: (0, _classNames['default'])('instrument-selector', { 'selected': this.state.instrument === 'sine' }),
+                    { className: (0, _classNames2['default'])('instrument-selector', { 'selected': this.state.instrument === 'piano' }),
+                      title: 'Piano',
+                      onClick: this.swapInstrument.bind(this, 'piano') },
+                    '🎹'
+                  ),
+                  _React['default'].createElement(
+                    'span',
+                    { className: (0, _classNames2['default'])('instrument-selector', { 'selected': this.state.instrument === 'sine' }),
                       title: 'Sine Wave',
                       onClick: this.swapInstrument.bind(this, 'sine') },
-                    ' ∿ '
+                    '∿'
                   )
                 )
               )
