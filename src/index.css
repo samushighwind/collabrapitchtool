@@ -5,6 +5,10 @@
   font-family: Roboto, Sans-Serif;
 }
 
+.pitch-tool.below-200 {
+  visibility: hidden;
+}
+
 .pitch-tool .control-box {
   display: flex;
   flex-direction: column;
@@ -56,6 +60,11 @@
   align-self: center;
 }
 
+.pitch-tool .controls-instrument {
+  display: flex;
+  flex-direction: row;
+}
+
 .pitch-tool .controls span {
   cursor: default;
 }
@@ -72,7 +81,7 @@
 }
 
 .pitch-tool .octave-shifter:hover:not(.exhausted),
-.pitch-tool .instrument-selector:hover:not(.exhausted),
+.pitch-tool .instrument-selector:hover,
 .pitch-tool .octave-shifter:active:not(.exhausted),
 .pitch-tool .instrument-selector.selected {
   text-shadow: 0 0 16px #68bcff;
@@ -83,12 +92,18 @@
   color: #3a7a94;
 }
 
+.pitch-tool .instrument-selector.selected svg {
+  fill: #3a7a94;
+}
+
 .pitch-tool .octave-shifter.exhausted {
   color: #aaa;
 }
 
 .pitch-tool .instrument-selector {
+  display: flex;
   font-size: 1.22em;
+  height: 1.22em;
   margin-left: calc(1.22em / 8);
   margin-right: calc(1.22em / 8);
 }
@@ -103,6 +118,10 @@
   padding: calc(1.22em / 8) calc(1.22em / 4);
   border: 1px solid #aaa;
   border-radius: calc(1.22em / 6);
+}
+
+.pitch-tool .instrument-selector svg {
+  height: 100%;
 }
 
 .pitch-tool .keys {
