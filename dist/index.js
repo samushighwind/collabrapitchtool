@@ -152,7 +152,7 @@
         var sources = _this2.state.sources;
         var source = _this2.state.sources[note];
         if (source) {
-          source.stop(_this2.context.currentTime);
+          source.stop();
           sources[note] = null;
           _this2.setState({
             sources: sources
@@ -180,8 +180,7 @@
     _createClass(_default, [{
       key: 'componentDidMount',
       value: function componentDidMount() {
-        this.context = new AudioContext();
-        var soundfont = new _Soundfont['default'](this.context);
+        var soundfont = new _Soundfont['default'](new AudioContext());
         // in returned function, 'this' refers to the invoking instrument object.
         var getWavePlayFn = function getWavePlayFn(vcoType) {
           return function (note, time, duration) {
@@ -259,8 +258,8 @@
         var height = getVal(props.height);
         var widthSuffix = getSuffix(width);
         var heightSuffix = getSuffix(height);
-        var widthVal = isNaN(width) ? width.replace(widthSuffix, '') : width;
-        var heightVal = isNaN(height) ? height.replace(heightSuffix, '') : height;
+        var widthVal = width && isNaN(width) ? width.replace(widthSuffix, '') : width;
+        var heightVal = height && isNaN(height) ? height.replace(heightSuffix, '') : height;
 
         if (width && height) {
           return {
@@ -268,13 +267,13 @@
             height: '' + heightVal + heightSuffix
           };
         }
-        if (this.props.width) {
+        if (width) {
           return {
             width: '' + widthVal + widthSuffix,
             height: widthSuffix === '%' ? '100%' : '' + widthVal / 3 + widthSuffix
           };
         }
-        if (this.props.height) {
+        if (height) {
           return {
             width: heightSuffix === '%' ? '100%' : '' + heightVal * 3 + heightSuffix,
             height: '' + heightVal + heightSuffix

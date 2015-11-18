@@ -70,8 +70,7 @@ export default class extends Component {
   }
 
   componentDidMount () {
-    this.context = new AudioContext();
-    const soundfont = new Soundfont(this.context);
+    const soundfont = new Soundfont(new AudioContext());
     // in returned function, 'this' refers to the invoking instrument object.
     var getWavePlayFn = function (vcoType) {
       return function (note, time, duration) {
@@ -225,7 +224,7 @@ export default class extends Component {
     const sources = this.state.sources;
     const source = this.state.sources[note];
     if (source) {
-      source.stop(this.context.currentTime);
+      source.stop();
       sources[note] = null;
       this.setState({
         sources: sources
