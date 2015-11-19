@@ -407,10 +407,6 @@
           outerStyle.zIndex = 2;
         }
 
-        var getInstrumentIconPath = function getInstrumentIconPath(name) {
-          return 'https://cdn.collabramusic.com/pitch-tool/svg/' + name + '.svg';
-        };
-
         return _React['default'].createElement(
           'div',
           { className: this.CONTAINER_CLASS_NAME, style: outerStyle },
@@ -440,7 +436,7 @@
                   ),
                   _React['default'].createElement(
                     'span',
-                    null,
+                    { className: 'current-octave' },
                     this.state.octave
                   ),
                   _React['default'].createElement(

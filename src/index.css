@@ -65,7 +65,8 @@
   flex-direction: row;
 }
 
-.pitch-tool .controls span {
+.pitch-tool .current-octave,
+.pitch-tool .control-label {
   cursor: default;
 }
 
@@ -78,22 +79,15 @@
   font-size: 1.33em;
   margin-left: calc(1.33em / 5);
   margin-right: calc(1.33em / 5);
+  line-height: 0;
 }
 
-.pitch-tool .octave-shifter:hover:not(.exhausted),
-.pitch-tool .instrument-selector:hover,
-.pitch-tool .octave-shifter:active:not(.exhausted),
-.pitch-tool .instrument-selector.selected {
-  text-shadow: 0 0 16px #68bcff;
+.pitch-tool .octave-shifter:not(.exhausted) {
+  cursor: pointer;
 }
 
-.pitch-tool .octave-shifter:active:not(.exhausted),
-.pitch-tool .instrument-selector.selected {
+.pitch-tool .octave-shifter:active:not(.exhausted) {
   color: #3a7a94;
-}
-
-.pitch-tool .instrument-selector.selected svg {
-  fill: #3a7a94;
 }
 
 .pitch-tool .octave-shifter.exhausted {
@@ -106,6 +100,7 @@
   height: 1.22em;
   margin-left: calc(1.22em / 8);
   margin-right: calc(1.22em / 8);
+  cursor: pointer;
 }
 
 .pitch-tool.above-600 .instrument-selector,
@@ -122,6 +117,11 @@
 
 .pitch-tool .instrument-selector svg {
   height: 100%;
+  fill: #333;
+}
+
+.pitch-tool .instrument-selector.selected svg {
+  fill: #3a7a94;
 }
 
 .pitch-tool .keys {

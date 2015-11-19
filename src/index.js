@@ -354,7 +354,7 @@ export default class extends Component {
                 <span className={ classNames('octave-shifter', { 'exhausted': this.state.octave <= this.OCTAVE_MIN }) }
                       title='Shift down one octave'
                       onClick={ this.shiftOctave.bind(this, 'left') }>{ '\u2039' }</span>
-                <span>{ this.state.octave }</span>
+                <span className='current-octave'>{ this.state.octave }</span>
                 <span className={ classNames('octave-shifter', { 'exhausted': this.state.octave >= this.OCTAVE_MAX - n }) }
                       title='Shift up one octave'
                       onClick={ this.shiftOctave.bind(this, 'right') }>{ '\u203a' }</span>
