@@ -349,7 +349,6 @@ export default class extends Component {
     if (this.props.includeVisibilityToggle) {
       outerStyle.position = 'absolute';
       outerStyle.top = '60px';
-      outerStyle.left = `${ 60 - parseInt(outerStyle.width) }px`;
       outerStyle.boxShadow = '5px 5px 30px -5px #333';
     }
 
