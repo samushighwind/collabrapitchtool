@@ -185,6 +185,12 @@
         }
       };
 
+      this.toggleVisibility = function () {
+        _this2.setState({
+          isVisible: !_this2.state.isVisible
+        });
+      };
+
       this.NOTES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
       this.OCTAVE_MIN = 1;
       this.OCTAVE_MAX = 8;
@@ -393,18 +399,21 @@
                 break;
               }
             }
-            if (widthClass === '' && actualWidth < 200) {
-              widthClass = 'below-200';
-            }
           }
-        } else {
-          widthClass = 'below-200';
         }
 
-        var outerStyle = this.state.isVisible ? this.state.widthAndHeight : { width: 0, height: 0 };
+        var outerStyle = {
+          width: this.state.widthAndHeight.width,
+          height: this.state.widthAndHeight.height
+        };
+        if (!this.state.isVisible) {
+          outerStyle.display = 'none';
+        }
         if (this.props.includeVisibilityToggle) {
           outerStyle.position = 'absolute';
-          outerStyle.zIndex = 2;
+          outerStyle.top = '60px';
+          outerStyle.left = 60 - parseInt(outerStyle.width) + 'px';
+          outerStyle.boxShadow = '5px 5px 30px -5px #333';
         }
 
         return _React['default'].createElement(
@@ -537,7 +546,24 @@
         if (this.props.includeVisibilityToggle) {
           return _React['default'].createElement(
             'div',
-            null,
+            { style: { position: 'relative' } },
+            _React['default'].createElement(
+              'button',
+              { className: (0, _classNames2['default'])('pitch-tool-toggle', { 'open': this.state.isVisible }),
+                title: this.state.isVisible ? 'Close pitch tool' : 'Open pitch tool',
+                onClick: this.toggleVisibility },
+              _React['default'].createElement(
+                'svg',
+                { version: '1.1',
+                  xmlns: 'http://www.w3.org/2000/svg',
+                  viewBox: '0 0 100 100' },
+                _React['default'].createElement('path', { d: 'M79.609,27.625L47.056,60.178c-1.996,1.996-5.238,1.996-7.234,0c-1.996-1.996-1.996-5.238,0-7.234\n                         l32.553-32.553l-7.234-7.234L32.588,45.71c-4.709,4.709-5.654,11.72-2.95,17.419L17.847,74.92c-0.84-0.223-1.707-0.38-2.617-0.38\n                         C9.58,74.539,5,79.119,5,84.77C5,90.42,9.58,95,15.23,95s10.23-4.58,10.23-10.23c0-0.91-0.157-1.777-0.38-2.617l11.791-11.791\n                         c5.699,2.704,12.71,1.759,17.419-2.95l32.553-32.553L79.609,27.625z' }),
+                _React['default'].createElement('path', { d: 'M33.576,33.009L28.85,31.05c3.137-7.573,9.034-13.472,16.607-16.609l1.958,4.726\n                         C41.103,21.782,36.188,26.697,33.576,33.009z' }),
+                _React['default'].createElement('path', { d: 'M68.955,71.148l-1.958-4.726c6.309-2.613,11.224-7.525,13.837-13.839l4.726,1.958\n                         C82.422,62.116,76.522,68.015,68.955,71.148z' }),
+                _React['default'].createElement('path', { d: 'M72.866,80.589l-1.958-4.726c8.832-3.662,15.71-10.54,19.367-19.369L95,58.452\n                         C90.819,68.545,82.961,76.408,72.866,80.589z' }),
+                _React['default'].createElement('path', { d: 'M24.134,29.097l-4.726-1.958C23.587,17.046,31.45,9.184,41.545,5l1.958,4.726\n                         C34.669,13.385,27.791,20.266,24.134,29.097z' })
+              )
+            ),
             this.renderPitchTool()
           );
         }
