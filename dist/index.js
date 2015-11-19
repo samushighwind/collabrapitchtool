@@ -133,7 +133,7 @@
           // releaseNote call will be removed if multitouch is supported
           _this2.releaseNote(_this2.state.lastNote, function () {
             var sources = _this2.state.sources;
-            sources[note] = _this2.instruments[_this2.state.instrument].play(note, 0);
+            sources[note] = _this2.instruments[_this2.state.instrument].play(note);
             _this2.setState({
               lastNote: note,
               sources: sources,
@@ -216,19 +216,20 @@
         this.computeActualWidth();
         window.addEventListener('resize', this.computeActualWidth);
 
-        var soundfont = new _Soundfont['default'](new AudioContext());
+        var ctx = new AudioContext();
+        var soundfont = new _Soundfont['default'](ctx);
         // in returned function, 'this' refers to the invoking instrument object.
         var getWavePlayFn = function getWavePlayFn(vcoType) {
-          return function (note, time, duration) {
-            return this.player.play(note, time, duration, { vcoType: vcoType, noStop: true });
+          return function (note) {
+            return this.player.play(note, ctx.currentTime, -1, { vcoType: vcoType });
           };
         };
         this.instruments = {
           piano: {
             player: soundfont.instrument('acoustic_grand_piano'),
             // necessary to get soundfont-specific play method
-            play: function play(note, time, duration) {
-              return this.player.play(note, time, duration);
+            play: function play(note) {
+              return this.player.play(note, ctx.currentTime, -1);
             },
             isPolyphonic: true,
             delay: 1.1

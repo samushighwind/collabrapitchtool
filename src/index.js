@@ -79,19 +79,20 @@ export default class extends Component {
     this.computeActualWidth();
     window.addEventListener('resize', this.computeActualWidth);
 
-    const soundfont = new Soundfont(new AudioContext());
+    const ctx = new AudioContext();
+    const soundfont = new Soundfont(ctx, 'https://cdn.collabramusic.com/soundfonts/', 'mp3');
     // in returned function, 'this' refers to the invoking instrument object.
     var getWavePlayFn = function (vcoType) {
-      return function (note, time, duration) {
-        return this.player.play(note, time, duration, { vcoType: vcoType, noStop: true });
+      return function (note) {
+        return this.player.play(note, ctx.currentTime, -1, { vcoType: vcoType });
       };
     };
     this.instruments = {
       piano: {
         player: soundfont.instrument('acoustic_grand_piano'),
         // necessary to get soundfont-specific play method
-        play: function (note, time, duration) {
-          return this.player.play(note, time, duration);
+        play: function (note) {
+          return this.player.play(note, ctx.currentTime, -1);
         },
         isPolyphonic: true,
         delay: 1.1
@@ -218,7 +219,7 @@ export default class extends Component {
       // releaseNote call will be removed if multitouch is supported
       this.releaseNote(this.state.lastNote, () => {
         const sources = this.state.sources;
-        sources[note] = this.instruments[this.state.instrument].play(note, 0);
+        sources[note] = this.instruments[this.state.instrument].play(note);
         this.setState({
           lastNote: note,
           sources: sources,
