@@ -217,7 +217,7 @@
         window.addEventListener('resize', this.computeActualWidth);
 
         var ctx = new AudioContext();
-        var soundfont = new _Soundfont['default'](ctx);
+        var soundfont = new _Soundfont['default'](ctx, 'https://cdn.collabramusic.com/soundfonts/', 'mp3');
         // in returned function, 'this' refers to the invoking instrument object.
         var getWavePlayFn = function getWavePlayFn(vcoType) {
           return function (note) {

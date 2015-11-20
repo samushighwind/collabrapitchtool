@@ -4,6 +4,7 @@
   border: 1px solid #333;
   border-radius: 7px;
   cursor: pointer;
+  outline: 0;
 }
 
 .pitch-tool-toggle svg {
@@ -29,6 +30,7 @@
   height: 100%;
   border: 1px solid #333;
   font-family: Roboto, Sans-Serif;
+  cursor: default;
 }
 
 .pitch-tool .control-box {
