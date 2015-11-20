@@ -418,7 +418,8 @@
         }
         if (this.props.includeVisibilityToggle) {
           outerStyle.position = 'absolute';
-          outerStyle.top = '60px';
+          outerStyle.top = '36px';
+          outerStyle.right = '0';
           outerStyle.boxShadow = '5px 5px 30px -5px #333';
         }
 
@@ -552,10 +553,10 @@
         if (this.props.includeVisibilityToggle) {
           return _React['default'].createElement(
             'div',
-            { style: { position: 'relative' } },
+            { style: { position: 'relative', display: 'inline-block' } },
             _React['default'].createElement(
               'button',
-              { className: (0, _classNames2['default'])('pitch-tool-toggle', { 'open': this.state.isVisible }),
+              { className: (0, _classNames2['default'])('pitch-tool-toggle', 'btn', 'btn-default', { 'open': this.state.isVisible }),
                 title: this.state.isVisible ? 'Close pitch tool' : 'Open pitch tool',
                 onClick: this.toggleVisibility },
               _React['default'].createElement(
@@ -568,7 +569,8 @@
                 _React['default'].createElement('path', { d: 'M68.955,71.148l-1.958-4.726c6.309-2.613,11.224-7.525,13.837-13.839l4.726,1.958\n                         C82.422,62.116,76.522,68.015,68.955,71.148z' }),
                 _React['default'].createElement('path', { d: 'M72.866,80.589l-1.958-4.726c8.832-3.662,15.71-10.54,19.367-19.369L95,58.452\n                         C90.819,68.545,82.961,76.408,72.866,80.589z' }),
                 _React['default'].createElement('path', { d: 'M24.134,29.097l-4.726-1.958C23.587,17.046,31.45,9.184,41.545,5l1.958,4.726\n                         C34.669,13.385,27.791,20.266,24.134,29.097z' })
-              )
+              ),
+              'Pitch Tool'
             ),
             this.renderPitchTool()
           );

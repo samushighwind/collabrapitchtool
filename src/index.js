@@ -355,7 +355,8 @@ export default class extends Component {
     }
     if (this.props.includeVisibilityToggle) {
       outerStyle.position = 'absolute';
-      outerStyle.top = '60px';
+      outerStyle.top = '36px';
+      outerStyle.right = '0';
       outerStyle.boxShadow = '5px 5px 30px -5px #333';
     }
 
@@ -463,8 +464,8 @@ export default class extends Component {
   render () {
     if (this.props.includeVisibilityToggle) {
       return (
-        <div style={ { position: 'relative' } }>
-          <button className={ classNames('pitch-tool-toggle', { 'open': this.state.isVisible }) }
+        <div style={ { position: 'relative', display: 'inline-block' } }>
+          <button className={ classNames('pitch-tool-toggle', 'btn', 'btn-default', { 'open': this.state.isVisible }) }
                title={ this.state.isVisible ? 'Close pitch tool' : 'Open pitch tool' }
                onClick={ this.toggleVisibility }>
             <svg version='1.1'
@@ -483,6 +484,7 @@ export default class extends Component {
               <path d={ `M24.134,29.097l-4.726-1.958C23.587,17.046,31.45,9.184,41.545,5l1.958,4.726
                          C34.669,13.385,27.791,20.266,24.134,29.097z` }/>
             </svg>
+            Pitch Tool
           </button>
           { this.renderPitchTool() }
         </div>
