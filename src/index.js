@@ -80,7 +80,10 @@ export default class extends Component {
     window.addEventListener('resize', this.computeActualWidth);
 
     const ctx = new AudioContext();
-    const soundfont = new Soundfont(ctx, 'https://cdn.collabramusic.com/soundfonts/', 'mp3');
+    Soundfont.nameToUrl = function (name) {
+      return 'https://cdn.collabramusic.com/soundfonts/' + name + '-mp3.js';
+    };
+    const soundfont = new Soundfont(ctx);
     // in returned function, 'this' refers to the invoking instrument object.
     var getWavePlayFn = function (vcoType) {
       return function (note) {

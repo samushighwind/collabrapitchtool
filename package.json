@@ -14,14 +14,16 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/collabra/react-pitch-tool#readme",
   "dependencies": {},
-  "devDependencies": {
-    "babel": "^5.8.23",
+  "peerDependencies": {
     "classnames": "^2.2.0",
-    "gulp": "^3.9.0",
-    "gulp-autoprefixer": "^3.1.0",
-    "gulp-minify-css": "^1.2.1",
     "react": "^0.14.2",
     "react-dom": "^0.14.2",
-    "soundfont-player": "git+https://github.com/CollabraMusic/soundfont-player.git"
+    "soundfont-player": "^0.4.0"
+  },
+  "devDependencies": {
+    "babel": "^5.8.23",
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-minify-css": "^1.2.1"
   }
 }
