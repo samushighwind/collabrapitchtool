@@ -221,7 +221,10 @@
         // in returned function, 'this' refers to the invoking instrument object.
         var getWavePlayFn = function getWavePlayFn(vcoType) {
           return function (note) {
-            return this.player.play(note, ctx.currentTime, -1, { vcoType: vcoType });
+            return this.player.play(note, ctx.currentTime, -1, {
+              vcoType: vcoType,
+              gain: 0.08
+            });
           };
         };
         this.instruments = {
