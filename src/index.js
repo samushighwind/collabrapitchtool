@@ -76,6 +76,7 @@ export default class extends Component {
   }
 
   componentDidMount () {
+    require('./index.css');
     this.computeActualWidth();
     window.addEventListener('resize', this.computeActualWidth);
 
