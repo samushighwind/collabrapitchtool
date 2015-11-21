@@ -15,7 +15,11 @@ var webpackConfig = {
     loaders: [
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader!autoprefixer-loader?{browsers:["> 2%"]}'
+        loader: 'style!css!autoprefixer?{browsers:["> 2%"]}'
+      },
+      {
+        test: /\.scss$/,
+        loader: 'style!css!autoprefixer?{browsers:["> 2%"]}!sass'
       },
       {
         test: /\.jsx?$/,
