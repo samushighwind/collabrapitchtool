@@ -61,7 +61,6 @@ export default class extends Component {
     this.OCTAVE_MAX = 8;
     this.NUMBER_OF_OCTAVES_TO_DISPLAY = 2;
     this.BREAKPOINTS = [600, 800, 1000, 1200, 1400, 1600, 1800];
-    this.CONTAINER_CLASS_NAME = 'pitch-tool-container';
     this.state = {
       instrument: 'sine',
       lastNote: null,
@@ -202,10 +201,7 @@ export default class extends Component {
     if (!this.doNotComputeWidthOnNextUpdate) {
       window.requestAnimationFrame(() => {
         this.setState({
-          /* undesirable to break abstraction, but necessary since using refs inside
-           * a separate component module will break React.
-           */
-          actualWidth: document.querySelector(`.${ this.CONTAINER_CLASS_NAME }`).getBoundingClientRect().width
+          actualWidth: this.refs.pitchToolContainer.getBoundingClientRect().width
         });
       });
       this.doNotComputeWidthOnNextUpdate = true;
@@ -362,7 +358,7 @@ export default class extends Component {
     }
 
     return (
-      <div className={ this.CONTAINER_CLASS_NAME } style={ outerStyle }>
+      <div ref='pitchToolContainer' className='pitch-tool-container' style={ outerStyle }>
         <div className={ classNames('pitch-tool', 'selection-disabled', { [widthClass]: widthClass }) }>
           <div className='control-box'>
             <div className='controls'>
