@@ -1,4 +1,5 @@
 var webpack = require('webpack');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var webpackConfig = {
   entry: './src/index.js',
@@ -14,12 +15,8 @@ var webpackConfig = {
   module: {
     loaders: [
       {
-        test: /\.css$/,
-        loader: 'style!css!autoprefixer?{browsers:["> 2%"]}'
-      },
-      {
         test: /\.scss$/,
-        loader: 'style!css!autoprefixer?{browsers:["> 2%"]}!sass'
+        loader: ExtractTextPlugin.extract('style-loader', 'css!autoprefixer?{browsers:["> 2%"]}!sass')
       },
       {
         test: /\.jsx?$/,
@@ -34,7 +31,10 @@ var webpackConfig = {
     'soundfont-player'
   ],
   plugins: [
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
+    new ExtractTextPlugin('index.css', {
+      allChunks: true
+    })
   ]
 };
 
