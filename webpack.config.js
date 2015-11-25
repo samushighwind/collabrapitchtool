@@ -32,7 +32,7 @@ var webpackConfig = {
   ],
   plugins: [
     new webpack.NoErrorsPlugin(),
-    new ExtractTextPlugin('index.css', {
+    new ExtractTextPlugin('bundle.css', {
       allChunks: true
     })
   ]

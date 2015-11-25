@@ -5,7 +5,8 @@
   -webkit-box-direction: normal;
           flex-direction: row;
   -webkit-box-align: center;
-          align-items: center; }
+          align-items: center;
+  box-sizing: border-box; }
   .pitch-tool-toggle.open {
     color: #eee;
     background-color: #333; }

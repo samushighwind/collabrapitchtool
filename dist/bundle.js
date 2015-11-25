@@ -164,10 +164,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (!_this2.doNotComputeWidthOnNextUpdate) {
 	        window.requestAnimationFrame(function () {
 	          _this2.setState({
-	            /* undesirable to break abstraction, but necessary since using refs inside
-	             * a separate component module will break React.
-	             */
-	            actualWidth: document.querySelector('.' + _this2.CONTAINER_CLASS_NAME).getBoundingClientRect().width
+	            actualWidth: _this2.refs.pitchToolContainer.getBoundingClientRect().width
 	          });
 	        });
 	        _this2.doNotComputeWidthOnNextUpdate = true;
@@ -251,7 +248,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.OCTAVE_MAX = 8;
 	    this.NUMBER_OF_OCTAVES_TO_DISPLAY = 2;
 	    this.BREAKPOINTS = [600, 800, 1000, 1200, 1400, 1600, 1800];
-	    this.CONTAINER_CLASS_NAME = 'pitch-tool-container';
 	    this.state = {
 	      instrument: 'sine',
 	      lastNote: null,
@@ -481,7 +477,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      return _react2['default'].createElement(
 	        'div',
-	        { className: this.CONTAINER_CLASS_NAME, style: outerStyle },
+	        { ref: 'pitchToolContainer', className: 'pitch-tool-container', style: outerStyle },
 	        _react2['default'].createElement(
 	          'div',
 	          { className: (0, _classnames2['default'])('pitch-tool', 'selection-disabled', _defineProperty({}, widthClass, widthClass)) },
