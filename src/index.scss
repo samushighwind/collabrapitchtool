@@ -51,7 +51,11 @@
     flex-direction: row;
     justify-content: space-around;
     color: #333;
-    font-size: 18px;
+    font-size: 14px;
+  }
+
+  &.above-400 .controls {
+    font-size:18px;
   }
 
   &.above-600 .controls {

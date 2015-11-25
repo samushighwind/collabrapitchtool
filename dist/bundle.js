@@ -247,7 +247,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.OCTAVE_MIN = 1;
 	    this.OCTAVE_MAX = 8;
 	    this.NUMBER_OF_OCTAVES_TO_DISPLAY = 2;
-	    this.BREAKPOINTS = [600, 800, 1000, 1200, 1400, 1600, 1800];
+	    this.BREAKPOINTS = [400, 600, 800, 1000, 1200, 1400, 1600, 1800];
 	    this.state = {
 	      instrument: 'sine',
 	      lastNote: null,

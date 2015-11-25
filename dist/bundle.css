@@ -52,6 +52,8 @@
             flex-direction: row;
     justify-content: space-around;
     color: #333;
+    font-size: 14px; }
+  .pitch-tool.above-400 .controls {
     font-size: 18px; }
   .pitch-tool.above-600 .controls {
     font-size: 24px; }
