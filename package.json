@@ -24,6 +24,7 @@
     "autoprefixer-loader": "^3.1.0",
     "babel-core": "^5.3.0",
     "babel-loader": "^5.3.0",
+    "base-scss": "git+ssh://git@bitbucket.org/collabra/base-scss.git",
     "css-loader": "^0.23.0",
     "extract-text-webpack-plugin": "^0.9.1",
     "node-sass": "^3.4.2",
