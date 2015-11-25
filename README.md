@@ -1,9 +1,16 @@
 To build: run `npm run build`.
 
-After installing this module in your project, add the following to your component file:
+To install in your project:
+`npm install --save git+ssh://git@bitbucket.org/collabra/react-pitch-tool.git`
+
+Also be sure all peer dependencies are installed in your project:
+`npm install --save react react-dom classnames soundfont-player`
+
+After installing this module in your project, add the following to your file:
 
 1. At the top, either `var PitchTool = require('react-pitch-tool');` or `import PitchTool from 'react-pitch-tool';`
-2. In your JSX, include the component like so: `<PitchTool width='420px' includeVisibilityToggle={ true } />`
+2. In your JSX, include the component like so: `<PitchTool width='320px' includeVisibilityToggle={ true } />`
+3. Be sure to include the css file for the PitchTool component: 'react-pitch-tool/dist/bundle.css'.
 
 Configuration:
 
