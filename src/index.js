@@ -3,6 +3,24 @@ import ReactDOM from 'react-dom';
 import Soundfont from 'soundfont-player';
 import classNames from 'classnames';
 
+/* This wrapper is necessary for black keys since
+ * they need to be absolutely positioned relative
+ * to an inline element, and newer browser standards
+ * move absolutely positioned elements to the beginning
+ * of their container by default, rather than repositioning
+ * them only once top, left, etc. attributes are applied.
+ */
+const KeyContainer = ({ color, children }) => {
+  if (color === 'white') {
+    return React.Children.only(children);
+  }
+  return (
+    <div className='black-key-container'>
+      {children}
+    </div>
+  );
+};
+
 class Key extends Component {
 
   constructor (props) {
@@ -38,16 +56,18 @@ class Key extends Component {
 
   render () {
     return (
-      <div className={ classNames(`${ this.props.color }-key`, { 'pressed': this.state.pressed }) }
-           onMouseDown={ this.playNote }
-           onTouchStart={ this.playNote }
-           onMouseEnter={ this.playNote }
-           onMouseUp={ this.releaseNote }
-           onTouchEnd={ this.releaseNote }
-           onMouseLeave={ this.releaseNote }>
-        { this.getKeyNameDiv() }
-
-      </div>
+      <KeyContainer color={this.props.color}>
+        <div className={ classNames(`${ this.props.color }-key`, { 'pressed': this.state.pressed }) }
+             onMouseDown={ this.playNote }
+             onTouchStart={ this.playNote }
+             onMouseEnter={ this.playNote }
+             onMouseUp={ this.releaseNote }
+             onTouchEnd={ this.releaseNote }
+             onMouseLeave={ this.releaseNote }
+        >
+          { this.getKeyNameDiv() }
+        </div>
+      </KeyContainer>
     );
   }
 }

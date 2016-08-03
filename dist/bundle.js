@@ -88,6 +88,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
+	/* This wrapper is necessary for black keys since
+	 * they need to be absolutely positioned relative
+	 * to an inline element, and newer browser standards
+	 * move absolutely positioned elements to the beginning
+	 * of their container by default, rather than repositioning
+	 * them only once top, left, etc. attributes are applied.
+	 */
+	var KeyContainer = function KeyContainer(_ref) {
+	  var color = _ref.color;
+	  var children = _ref.children;
+
+	  if (color === 'white') {
+	    return _react2['default'].Children.only(children);
+	  }
+	  return _react2['default'].createElement(
+	    'div',
+	    { className: 'black-key-container' },
+	    children
+	  );
+	};
+
 	var Key = (function (_Component) {
 	  _inherits(Key, _Component);
 
@@ -134,15 +155,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
-	        'div',
-	        { className: (0, _classnames2['default'])(this.props.color + '-key', { 'pressed': this.state.pressed }),
-	          onMouseDown: this.playNote,
-	          onTouchStart: this.playNote,
-	          onMouseEnter: this.playNote,
-	          onMouseUp: this.releaseNote,
-	          onTouchEnd: this.releaseNote,
-	          onMouseLeave: this.releaseNote },
-	        this.getKeyNameDiv()
+	        KeyContainer,
+	        { color: this.props.color },
+	        _react2['default'].createElement(
+	          'div',
+	          { className: (0, _classnames2['default'])(this.props.color + '-key', { 'pressed': this.state.pressed }),
+	            onMouseDown: this.playNote,
+	            onTouchStart: this.playNote,
+	            onMouseEnter: this.playNote,
+	            onMouseUp: this.releaseNote,
+	            onTouchEnd: this.releaseNote,
+	            onMouseLeave: this.releaseNote
+	          },
+	          this.getKeyNameDiv()
+	        )
 	      );
 	    }
 	  }]);
